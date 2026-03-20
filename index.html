@@ -1,1044 +1,430 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KG Grocery | Checkout</title>
+    <meta charset="UTF-">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>KG Grocery • Payment</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         }
         body {
-            background-color: #fefefe;
-            color: #1e2a2f;
-            line-height: 1.6;
+            background-color: #f5f7fa;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        /* Navbar (same as index) */
-        .navbar {
-            background-color: #ffffff;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        .app-bar {
+            background-color: #2b7a4b;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
-            z-index: 100;
-            padding: 1rem 0;
+            z-index: 10;
         }
-        .navbar .container {
+        .app-bar i {
+            margin-right: 8px;
+        }
+        .container {
+            flex: 1;
+            padding: 1.5rem 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .order-summary {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e0f0e5;
+        }
+        .order-summary h3 {
+            color: #1e2a2f;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        .summary-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #e0e0e0;
         }
-        .logo {
-            font-size: 1.8rem;
+        .summary-row.total {
             font-weight: 700;
+            font-size: 1.2rem;
             color: #2b7a4b;
-            letter-spacing: -0.5px;
-        }
-        .logo span {
-            color: #2c3e50;
-            font-weight: 400;
-            font-size: 1rem;
-            margin-left: 4px;
-        }
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-        .nav-links a {
-            text-decoration: none;
-            font-weight: 500;
-            color: #2c3e50;
-            transition: color 0.2s;
-            font-size: 1rem;
-        }
-        .nav-links a:hover {
-            color: #2b7a4b;
-        }
-        .auth-btn {
-            background: #2b7a4b;
-            color: white;
-            border: none;
-            padding: 0.5rem 1.5rem;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .auth-btn:hover {
-            background: #1e5f38;
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .user-info span {
-            font-weight: 600;
-            color: #2b7a4b;
-        }
-        .logout-btn {
-            background: transparent;
-            border: 2px solid #2b7a4b;
-            color: #2b7a4b;
-            padding: 0.3rem 1rem;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .logout-btn:hover {
-            background: #2b7a4b;
-            color: white;
-        }
-        .account-link {
-            background: transparent;
-            border: 2px solid #2b7a4b;
-            color: #2b7a4b;
-            padding: 0.3rem 1rem;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-        .account-link:hover {
-            background: #2b7a4b;
-            color: white;
-        }
-        .hamburger {
-            display: none;
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: #2c3e50;
-        }
-        /* Order page specific */
-        .order-page {
-            padding: 4rem 0;
+            border-bottom: none;
+            margin-top: 0.5rem;
         }
         .section-title {
             text-align: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-        .section-subtitle {
-            text-align: center;
-            font-size: 1.1rem;
-            color: #4a6b5a;
-            max-width: 700px;
-            margin: 0 auto 3rem;
-        }
-        .cart-container {
-            background: white;
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.03);
-            border: 1px solid #c8e6c9;
-        }
-        .cart-container h3 {
-            margin-bottom: 1rem;
-            color: #1e2a2f;
-        }
-        #cart-items {
-            margin-bottom: 1rem;
-        }
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem 0;
-            border-bottom: 1px dashed #e0e0e0;
-        }
-        .cart-item-info {
-            flex: 2;
-        }
-        .cart-item-name {
-            font-weight: 600;
-        }
-        .cart-item-price {
-            color: #2b7a4b;
-            font-weight: 500;
-        }
-        .cart-item-actions {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-        .cart-item-actions button {
-            background: #f0f0f0;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            font-weight: bold;
-            cursor: pointer;
-            color: #1e2a2f;
-        }
-        .cart-item-actions button:hover {
-            background: #2b7a4b;
-            color: white;
-        }
-        .cart-item-actions span {
-            min-width: 30px;
-            text-align: center;
-        }
-        .empty-cart {
-            color: #888;
-            font-style: italic;
-            padding: 1rem 0;
-            text-align: center;
-        }
-        .cart-total {
-            display: flex;
-            justify-content: space-between;
-            font-weight: 700;
-            font-size: 1.3rem;
-            border-top: 2px solid #2b7a4b;
-            padding-top: 1rem;
-        }
-        .order-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 3rem;
-            margin-top: 3rem;
-        }
-        .contact-info {
-            flex: 1 1 300px;
-            background: #edf7ed;
-            padding: 2rem;
-            border-radius: 30px;
-        }
-        .contact-info h4 {
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-        }
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .info-item i {
-            font-size: 1.8rem;
-            color: #2b7a4b;
-            width: 40px;
-        }
-        .info-item p {
-            font-size: 1.1rem;
-            color: #2c3e50;
-        }
-        .order-form {
-            flex: 2 1 400px;
-            background: white;
-            padding: 2rem;
-            border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-        }
-        .order-form h4 {
-            font-size: 1.8rem;
-            margin-bottom: 1.8rem;
-        }
-        .form-group {
             margin-bottom: 1.5rem;
         }
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 1rem 1.2rem;
-            border: 2px solid #c8e6c9;
-            border-radius: 20px;
-            font-size: 1rem;
-            outline: none;
-        }
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: #2b7a4b;
-        }
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        .order-form button {
-            background: #2b7a4b;
-            color: white;
-            border: none;
-            padding: 1rem 2.5rem;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            cursor: pointer;
-            width: 100%;
-        }
-        .order-form button:hover {
-            background: #1e5f38;
-        }
-        .delivery-note {
-            margin-top: 2rem;
-            background: #e8f5e9;
-            padding: 1.5rem;
-            border-radius: 30px;
-            text-align: center;
-            font-weight: 500;
-            color: #1e3a2a;
-            border: 1px dashed #2b7a4b;
-        }
-        .payment-methods {
-            display: flex;
-            gap: 1rem;
-            margin: 0.5rem 0 1rem;
-            flex-wrap: wrap;
-        }
-        .method-card {
-            flex: 1;
-            min-width: 100px;
-            background: white;
-            border: 2px solid #c8e6c9;
-            border-radius: 16px;
-            padding: 1rem 0.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .method-card.selected {
-            border-color: #2b7a4b;
-            background: #e8f5e9;
-        }
-        .method-card i {
-            font-size: 2rem;
-            color: #2b7a4b;
-            display: block;
-            margin-bottom: 0.3rem;
-        }
-        .method-card span {
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        .payment-details {
-            background: #f9f9f9;
-            border-radius: 16px;
-            padding: 1.2rem;
-            margin: 1rem 0;
-            min-height: 100px;
-        }
-        .bank-details {
-            background: white;
-            padding: 1rem;
-            border-radius: 12px;
-            border: 1px solid #e0e0e0;
-            font-size: 0.95rem;
-        }
-        .copy-btn {
-            background: #2b7a4b;
-            color: white;
-            border: none;
-            padding: 0.5rem 1.2rem;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            margin-top: 0.5rem;
-        }
-        .telebirr-info, .cash-info {
-            background: white;
-            padding: 1rem;
-            border-radius: 12px;
-            border-left: 4px solid #2b7a4b;
-        }
-        .login-required {
-            text-align: center;
-            padding: 2rem;
-            background: #f9f9f9;
-            border-radius: 20px;
-            margin: 2rem 0;
-        }
-        .login-required i {
-            font-size: 3rem;
-            color: #2b7a4b;
-            margin-bottom: 1rem;
-        }
-        .login-required p {
-            font-size: 1.2rem;
+        .section-title h2 {
             color: #1e2a2f;
-        }
-        .login-required button {
-            background: #2b7a4b;
-            color: white;
-            border: none;
-            padding: 0.8rem 2rem;
-            border-radius: 30px;
+            font-size: 1.8rem;
             font-weight: 600;
-            margin-top: 1rem;
-            cursor: pointer;
         }
-        .footer {
-            background: #1e2a2f;
-            color: #eaecf0;
-            padding: 2rem 0;
-            text-align: center;
-            margin-top: 3rem;
+        .section-title p {
+            color: #4a6b5a;
+            font-size: 1rem;
+            margin-top: 0.3rem;
         }
-        .footer .container {
+        .payment-grid {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
-        .footer-links {
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.2rem 1.5rem;
             display: flex;
-            gap: 2rem;
-            justify-content: center;
-            list-style: none;
-            margin: 1rem 0;
-        }
-        .footer-links a {
-            color: #eaecf0;
+            align-items: center;
+            gap: 1.2rem;
             text-decoration: none;
+            color: #1e2a2f;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e0f0e5;
+            transition: transform 0.1s ease, box-shadow 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            cursor: pointer;
+            border-left: 6px solid transparent;
         }
-        .footer-links a:hover {
+        .payment-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .payment-card.telebirr {
+            border-left-color: #0088cc;
+        }
+        .payment-card.cbe {
+            border-left-color: #e11b22;
+        }
+        .payment-card.cash {
+            border-left-color: #2b7a4b;
+        }
+        .payment-card.social {
+            border-left-color: #8a3ab9;
+        }
+        .payment-card i {
+            font-size: 2.5rem;
+            width: 2.5rem;
+            text-align: center;
+        }
+        .payment-card .info {
+            flex: 1;
+        }
+        .payment-card .info h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+        .payment-card .info p {
+            color: #4a6b5a;
+            font-size: 0.9rem;
+        }
+        .payment-card .arrow {
             color: #2b7a4b;
+            font-size: 1.2rem;
+            opacity: 0.7;
         }
-        .social-icons {
-            display: flex;
-            gap: 1.5rem;
+        .fa-telebirr {
+            color: #0088cc;
+        }
+        .fa-cbe {
+            color: #e11b22;
+        }
+        .back-home {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.7rem 2rem;
+            background-color: #2b7a4b;
+            color: white;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(43,122,75,0.3);
+            width: 100%;
+        }
+        .back-home i {
+            margin-right: 0.5rem;
+        }
+        .footer {
+            text-align: center;
+            padding: 1.5rem 1rem 1rem;
+            font-size: 0.9rem;
+            color: #4a6b5a;
+        }
+        .footer a {
+            color: #2b7a4b;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            z-index: 1000;
         }
-        .social-icons a {
-            color: #eaecf0;
+        .modal-overlay.active {
+            display: flex;
         }
-        hr {
-            border: 0.5px solid #4a6b5a;
-            margin: 1.5rem 0 1rem;
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            .hamburger {
-                display: block;
-            }
+        .modal-content i {
+            font-size: 3rem;
+            color: #2b7a4b;
+            margin-bottom: 1rem;
+        }
+        .modal-content h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+        .modal-content p {
+            color: #4a6b5a;
+            margin-bottom: 1.5rem;
+        }
+        .modal-content button {
+            background: #2b7a4b;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar (same as index) -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="logo">KG <span>Grocery</span></div>
-            <!-- <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="index.html#about">About</a></li>
-                <li><a href="index.html#groceries">Groceries</a></li>
-                <li><a href="index.html#track">Track</a></li>
-                <li><a href="#" class="active">Checkout</a></li>
-                <li><a href="profile.html">Profile</a></li>
-            </ul> -->
-            <div class="user-info" id="userInfo" style="display: none;">
-                <span id="userName"></span>
-                <button class="logout-btn" id="logoutBtn">Logout</button>
+    <div class="app-bar">
+        <i class="fas fa-credit-card"></i> KG Grocery • Payment
+    </div>
+
+    <div class="container">
+        <!-- Order Summary (dynamically filled) -->
+        <div class="order-summary" id="orderSummary">
+            <h3><i class="fas fa-shopping-basket" style="color:#2b7a4b;"></i> Your Order</h3>
+            <div id="orderItems"></div>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="subtotal">0 Birr</span>
             </div>
-            <button class="auth-btn" id="loginBtn">Login / Register</button>
-            <div class="hamburger">☰</div>
-        </div>
-    </nav>
-
-    <!-- Order Section -->
-    <section class="order-page" id="order">
-        <div class="container">
-            <h1 class="section-title">Complete Your Order</h1>
-            <p class="section-subtitle">Review your cart and fill in your details to place your order.</p>
-            
-            <!-- Login required message (shown when not logged in) -->
-            <div id="loginRequiredMessage" class="login-required">
-                <i class="fas fa-lock"></i>
-                <p>Please log in or register to place an order.</p>
-                <button onclick="document.getElementById('loginBtn').click()">Login / Register</button>
+            <div class="summary-row">
+                <span>Delivery</span>
+                <span>25 Birr</span>
             </div>
-
-            <!-- Order content (shown only when logged in) -->
-            <div id="orderContent" style="display: none;">
-                <!-- Shopping Cart Summary -->
-                <div class="cart-container">
-                    <h3>Your Cart</h3>
-                    <div id="cart-items">
-                        <p class="empty-cart">Your cart is empty. <a href="index.html#groceries">Continue shopping</a></p>
-                    </div>
-                    <div class="cart-total">
-                        <span>Total:</span>
-                        <span id="cart-total-amount">0 Birr</span>
-                    </div>
-                </div>
-
-                <div class="order-grid">
-                    <!-- left: contact info -->
-                    <div class="contact-info">
-                        <h4>KG Grocery <span style="color:#2b7a4b;">●</span></h4>
-                        <div class="info-item">
-                            <i class="fas fa-map-pin"></i>
-                            <p>Main office: Debre Markos,<br>Kebele 01, near Commercial Bank of Ethiopia,<br>Abima branch</p>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-phone-alt"></i>
-                            <p>+251 967 859 515 <br> +251 953 082 867</p>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-envelope"></i>
-                            <p>grocery@kg.et <br> order@kggrocery.com</p>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-clock"></i>
-                            <p>Mon–Fri: 12:00 AM – 2:00 AM &<br>10:30 AM – 12:30 PM<br>Sat & Sun: 12:00 AM – 12:00 PM</p>
-                        </div>
-                    </div>
-
-                    <!-- right: order form -->
-                    <div class="order-form">
-                        <h4>Place your order</h4>
-                        <form id="orderForm" onsubmit="event.preventDefault(); placeOrder();">
-                            <div class="form-group">
-                                <input type="text" id="order_name" placeholder="Your full name" required>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" id="order_phone" placeholder="Phone number (for delivery updates)" required>
-                            </div>
-                            <div class="form-group">
-                                <input type="email" id="order_email" placeholder="Email address (optional)">
-                            </div>
-                            <div class="form-group">
-                                <input type="text" id="order_address" placeholder="Delivery address (house number, landmark, area)" required>
-                            </div>
-                            <div class="form-group">
-                                <textarea id="order_details" placeholder="What would you like to order? (e.g., 2kg tomatoes, 1L milk, 1 loaf of bread)"></textarea>
-                            </div>
-                            
-                            <!-- Payment method selection -->
-                            <div class="form-group">
-                                <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Payment method</label>
-                                <div class="payment-methods">
-                                    <div class="method-card" onclick="selectMethod('telebirr')">
-                                        <i class="fas fa-mobile-alt"></i>
-                                        <span>Telebirr</span>
-                                    </div>
-                                    <div class="method-card" onclick="selectMethod('bank')">
-                                        <i class="fas fa-university"></i>
-                                        <span>Bank Transfer</span>
-                                    </div>
-                                    <div class="method-card" onclick="selectMethod('cash')">
-                                        <i class="fas fa-money-bill-wave"></i>
-                                        <span>Cash on Delivery</span>
-                                    </div>
-                                    <!-- Social Media Payment Card -->
-                                    <div class="method-card" onclick="selectMethod('social')">
-                                        <i class="fas fa-hashtag"></i>
-                                        <span>Social Media</span>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="payment_method" id="payment_method" value="telebirr">
-                            </div>
-
-                            <!-- Dynamic payment instructions -->
-                            <div id="payment-details" class="payment-details"></div>
-
-                            <div class="form-group">
-                                <textarea id="order_instructions" placeholder="Additional instructions (gate color, preferred time, etc.)"></textarea>
-                            </div>
-                            
-                            <button type="submit" class="btn" style="width: 100%;">Place order</button>
-                        </form>
-                    </div>
-                </div>
-                <!-- delivery note -->
-                <div class="delivery-note">
-                    <i class="fas fa-pen"></i> Please write your full address clearly. We deliver to every neighbourhood in Debre Markos.
-                </div>
+            <div class="summary-row total">
+                <span>Total</span>
+                <span id="totalAmount">0 Birr</span>
             </div>
         </div>
-    </section>
 
-    <!-- Auth Modal -->
-    <div class="modal" id="authModal" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1000;">
-        <div class="modal-content" style="background:white; padding:2rem; border-radius:30px; max-width:400px; width:90%;">
-            <div class="modal-tabs" style="display:flex; gap:1rem; margin-bottom:2rem;">
-                <button class="modal-tab active" id="loginTab" style="flex:1; padding:0.8rem; background:#f0f0f0; border:none; border-radius:30px; font-weight:600; cursor:pointer;">Login</button>
-                <button class="modal-tab" id="registerTab" style="flex:1; padding:0.8rem; background:#f0f0f0; border:none; border-radius:30px; font-weight:600; cursor:pointer;">Register</button>
+        <div class="section-title">
+            <h2>Choose Payment Method</h2>
+            <p>Tap to open app and complete payment</p>
+        </div>
+
+        <div class="payment-grid">
+            <!-- Telebirr -->
+            <div class="payment-card telebirr" onclick="openApp('telebirr')">
+                <i class="fas fa-mobile-alt" style="color: #0088cc;"></i>
+                <div class="info">
+                    <h3>Telebirr</h3>
+                    <p>Pay with mobile money</p>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
             </div>
-            <div id="loginForm" class="auth-form active" style="display:block;">
-                <input type="text" id="loginPhone" placeholder="Phone number (e.g., 0912345678 or +251912345678)" style="width:100%; padding:1rem; margin-bottom:1rem; border:2px solid #c8e6c9; border-radius:20px;">
-                <input type="password" id="loginPassword" placeholder="Password" style="width:100%; padding:1rem; margin-bottom:1rem; border:2px solid #c8e6c9; border-radius:20px;">
-                <button onclick="login()" style="width:100%; background:#2b7a4b; color:white; border:none; padding:1rem; border-radius:30px; font-weight:600;">Login</button>
-                <div id="loginError" class="auth-error" style="color:#c44536; margin-top:0.5rem;"></div>
+
+            <!-- CBE Birr -->
+            <div class="payment-card cbe" onclick="openApp('cbe')">
+                <i class="fas fa-university" style="color: #e11b22;"></i>
+                <div class="info">
+                    <h3>CBE Birr</h3>
+                    <p>Commercial Bank of Ethiopia</p>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
             </div>
-            <div id="registerForm" class="auth-form" style="display:none;">
-                <input type="text" id="regName" placeholder="Full name" style="width:100%; padding:1rem; margin-bottom:1rem; border:2px solid #c8e6c9; border-radius:20px;">
-                <input type="text" id="regPhone" placeholder="Phone number (e.g., 0912345678 or +251912345678)" style="width:100%; padding:1rem; margin-bottom:1rem; border:2px solid #c8e6c9; border-radius:20px;">
-                <input type="password" id="regPassword" placeholder="Password" style="width:100%; padding:1rem; margin-bottom:1rem; border:2px solid #c8e6c9; border-radius:20px;">
-                <button onclick="register()" style="width:100%; background:#2b7a4b; color:white; border:none; padding:1rem; border-radius:30px; font-weight:600;">Register</button>
-                <div id="registerError" class="auth-error" style="color:#c44536; margin-top:0.5rem;"></div>
+
+            <!-- Cash on Delivery -->
+            <div class="payment-card cash" onclick="confirmCashPayment()">
+                <i class="fas fa-money-bill-wave" style="color: #2b7a4b;"></i>
+                <div class="info">
+                    <h3>Cash on Delivery</h3>
+                    <p>Pay when you receive</p>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
             </div>
+
+            <!-- Social Media -->
+            <div class="payment-card social" onclick="openSocialPayment()">
+                <i class="fas fa-hashtag" style="color: #8a3ab9;"></i>
+                <div class="info">
+                    <h3>Social Media</h3>
+                    <p>Contact us to arrange</p>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-home">
+            <i class="fas fa-arrow-left"></i> Back to Shopping
+        </a>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="cashModal">
+        <div class="modal-content">
+            <i class="fas fa-check-circle"></i>
+            <h3>Order Confirmed</h3>
+            <p>Your order has been placed. Pay <span id="modalTotal"></span> when your delivery arrives.</p>
+            <button onclick="closeModal()">OK</button>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div style="font-size: 1.8rem; font-weight: 700;">KG <span style="color:#2b7a4b;">Grocery</span></div>
-            <ul class="footer-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="index.html#about">About</a></li>
-                <li><a href="index.html#groceries">Groceries</a></li>
-                <li><a href="index.html#track">Track</a></li>
-                <li><a href="order.html">Checkout</a></li>
-                <li><a href="profile.html">Profile</a></li>
-            </ul>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-telegram"></i></a>
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
-            <hr>
-            <p>© 2025 KG Grocery Delivery — Debre Markos, Ethiopia. All rights reserved.</p>
-        </div>
-    </footer>
+    <div class="footer">
+        <p>© 2026 KG Grocery — Debre Markos</p>
+    </div>
 
     <script>
-        // ---------- AUTHENTICATION SYSTEM ----------
-        const loginBtn = document.getElementById('loginBtn');
-        const authModal = document.getElementById('authModal');
-        const loginTab = document.getElementById('loginTab');
-        const registerTab = document.getElementById('registerTab');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const userInfo = document.getElementById('userInfo');
-        const userNameSpan = document.getElementById('userName');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const loginRequired = document.getElementById('loginRequiredMessage');
-        const orderContent = document.getElementById('orderContent');
-
-        function isValidEthiopianPhone(phone) {
-            const cleaned = phone.replace(/\s+/g, '').replace(/-/g, '');
-            const ethioPattern = /^(\+251|0)[1-9]\d{8}$/;
-            return ethioPattern.test(cleaned);
-        }
-
-        function getUsers() {
-            const users = localStorage.getItem('kgUsers');
-            return users ? JSON.parse(users) : [];
-        }
-
-        function saveUsers(users) {
-            localStorage.setItem('kgUsers', JSON.stringify(users));
-        }
-
-        function getCurrentUser() {
-            const userJson = localStorage.getItem('kgCurrentUser');
-            return userJson ? JSON.parse(userJson) : null;
-        }
-
-        function setCurrentUser(user) {
-            if (user) {
-                localStorage.setItem('kgCurrentUser', JSON.stringify(user));
-            } else {
-                localStorage.removeItem('kgCurrentUser');
-            }
-        }
-
-        function updateAuthUI() {
-            const user = getCurrentUser();
-            if (user) {
-                loginBtn.style.display = 'none';
-                userInfo.style.display = 'flex';
-                userNameSpan.textContent = user.name;
-
-                const existingLink = userInfo.querySelector('.account-link');
-                if (existingLink) existingLink.remove();
-
-                const profileLink = document.createElement('a');
-                profileLink.href = 'profile.html';
-                profileLink.className = 'account-link';
-                profileLink.textContent = 'My Account';
-                userInfo.insertBefore(profileLink, logoutBtn);
-
-                loginRequired.style.display = 'none';
-                orderContent.style.display = 'block';
-            } else {
-                loginBtn.style.display = 'block';
-                userInfo.style.display = 'none';
-                loginRequired.style.display = 'block';
-                orderContent.style.display = 'none';
-            }
-        }
-
-        window.register = function() {
-            const name = document.getElementById('regName').value.trim();
-            const phone = document.getElementById('regPhone').value.trim();
-            const password = document.getElementById('regPassword').value.trim();
-            const errorDiv = document.getElementById('registerError');
-
-            errorDiv.textContent = '';
-
-            if (!name || !phone || !password) {
-                errorDiv.textContent = 'All fields are required';
-                return;
-            }
-
-            if (!isValidEthiopianPhone(phone)) {
-                errorDiv.textContent = 'Please enter a valid Ethiopian phone number';
-                return;
-            }
-
-            const users = getUsers();
-            if (users.find(u => u.phone === phone)) {
-                errorDiv.textContent = 'Phone number already registered';
-                return;
-            }
-
-            const newUser = { name, phone, password };
-            users.push(newUser);
-            saveUsers(users);
-            setCurrentUser(newUser);
-            authModal.style.display = 'none';
-            updateAuthUI();
-            document.getElementById('regName').value = '';
-            document.getElementById('regPhone').value = '';
-            document.getElementById('regPassword').value = '';
-        };
-
-        window.login = function() {
-            const phone = document.getElementById('loginPhone').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-            const errorDiv = document.getElementById('loginError');
-
-            errorDiv.textContent = '';
-
-            if (!phone || !password) {
-                errorDiv.textContent = 'Please enter phone and password';
-                return;
-            }
-
-            if (!isValidEthiopianPhone(phone)) {
-                errorDiv.textContent = 'Please enter a valid Ethiopian phone number';
-                return;
-            }
-
-            const users = getUsers();
-            const user = users.find(u => u.phone === phone && u.password === password);
-            if (user) {
-                setCurrentUser(user);
-                authModal.style.display = 'none';
-                updateAuthUI();
-                document.getElementById('loginPhone').value = '';
-                document.getElementById('loginPassword').value = '';
-            } else {
-                errorDiv.textContent = 'Invalid phone or password';
-            }
-        };
-
-        logoutBtn.addEventListener('click', () => {
-            setCurrentUser(null);
-            updateAuthUI();
-        });
-
-        loginBtn.addEventListener('click', () => {
-            authModal.style.display = 'flex';
-        });
-
-        authModal.addEventListener('click', (e) => {
-            if (e.target === authModal) {
-                authModal.style.display = 'none';
-            }
-        });
-
-        loginTab.addEventListener('click', () => {
-            loginTab.classList.add('active');
-            registerTab.classList.remove('active');
-            loginForm.style.display = 'block';
-            registerForm.style.display = 'none';
-        });
-
-        registerTab.addEventListener('click', () => {
-            registerTab.classList.add('active');
-            loginTab.classList.remove('active');
-            registerForm.style.display = 'block';
-            loginForm.style.display = 'none';
-        });
-
-        updateAuthUI();
-
-        // ---------- CART & PAYMENT FUNCTIONS ----------
-        let cart = [];
-
-        function loadCart() {
-            const saved = localStorage.getItem('kgCart');
-            if (saved) {
-                cart = JSON.parse(saved);
-                updateCartDisplay();
-            }
-        }
-
-        function saveCart() {
-            localStorage.setItem('kgCart', JSON.stringify(cart));
-        }
-
-        function updateCartDisplay() {
-            const cartDiv = document.getElementById('cart-items');
-            const totalSpan = document.getElementById('cart-total-amount');
+        // Load cart from localStorage
+        function loadOrderSummary() {
+            const cart = JSON.parse(localStorage.getItem('kgCart')) || [];
+            const orderItemsDiv = document.getElementById('orderItems');
+            const subtotalSpan = document.getElementById('subtotal');
+            const totalSpan = document.getElementById('totalAmount');
             
             if (cart.length === 0) {
-                cartDiv.innerHTML = '<p class="empty-cart">Your cart is empty. <a href="index.html#groceries">Continue shopping</a></p>';
-                totalSpan.innerText = '0 Birr';
-                const totalInput = document.getElementById('order_total');
-                if (totalInput) totalInput.value = 0;
+                orderItemsDiv.innerHTML = '<p class="empty-cart" style="color:#888; text-align:center; padding:1rem;">Your cart is empty</p>';
+                subtotalSpan.innerText = '0 Birr';
+                totalSpan.innerText = '25 Birr'; // delivery only
                 return;
             }
-            
-            let html = '';
-            let total = 0;
-            
+
+            let itemsHtml = '';
+            let subtotal = 0;
+
             cart.forEach(item => {
                 const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                html += `
-                    <div class="cart-item">
-                        <div class="cart-item-info">
-                            <span class="cart-item-name">${item.name}</span>
-                            <span class="cart-item-price"> ${item.price} Birr</span>
-                        </div>
-                        <div class="cart-item-actions">
-                            <button onclick="removeFromCart('${item.name}')">−</button>
-                            <span>${item.quantity}</span>
-                            <button onclick="addToCart('${item.name}', ${item.price})">+</button>
-                            <button onclick="deleteItem('${item.name}')" style="background:#ff4444; color:white;">🗑️</button>
-                        </div>
+                subtotal += itemTotal;
+                itemsHtml += `
+                    <div class="summary-row">
+                        <span>${item.name} x${item.quantity}</span>
+                        <span>${item.price} Birr</span>
                     </div>
                 `;
             });
-            
-            cartDiv.innerHTML = html;
-            totalSpan.innerText = total + ' Birr';
-            
-            let totalInput = document.getElementById('order_total');
-            if (!totalInput) {
-                totalInput = document.createElement('input');
-                totalInput.type = 'hidden';
-                totalInput.id = 'order_total';
-                totalInput.name = 'order_total';
-                document.getElementById('orderForm').appendChild(totalInput);
-            }
-            totalInput.value = total;
-            
-            if (document.getElementById('payment_method').value === 'bank') {
-                updatePaymentDetails('bank');
-            }
+
+            orderItemsDiv.innerHTML = itemsHtml;
+            subtotalSpan.innerText = subtotal + ' Birr';
+            totalSpan.innerText = (subtotal + 25) + ' Birr';
         }
 
-        window.addToCart = function(name, price) {
-            const existing = cart.find(item => item.name === name);
-            if (existing) {
-                existing.quantity += 1;
-            } else {
-                cart.push({ name, price, quantity: 1 });
-            }
-            updateCartDisplay();
-            saveCart();
-        };
+        // App deep linking
+        function openApp(provider) {
+            const total = document.getElementById('totalAmount').innerText;
+            const amount = total.replace(' Birr', '');
+            
+            let appUrl = '';
+            let fallbackUrl = '';
 
-        window.removeFromCart = function(name) {
-            const index = cart.findIndex(item => item.name === name);
-            if (index !== -1) {
-                if (cart[index].quantity > 1) {
-                    cart[index].quantity -= 1;
-                } else {
-                    cart.splice(index, 1);
+            if (provider === 'telebirr') {
+                // Telebirr deep link – format unknown, using common pattern
+                appUrl = 'telebirr://pay?amount=' + amount + '&merchant=KG_Grocery&order=' + generateOrderId();
+                fallbackUrl = 'https://play.google.com/store/apps/details?id=et.telebirr.mobile'; // Telebirr Play Store
+            } else if (provider === 'cbe') {
+                // CBE Birr deep link – format unknown
+                appUrl = 'cbebirr://pay?amount=' + amount + '&merchant=KG_Grocery&order=' + generateOrderId();
+                fallbackUrl = 'https://play.google.com/store/apps/details?id=et.cbe.cbebirr'; // CBE Birr Play Store
+            }
+
+            // Try to open app
+            const start = Date.now();
+            window.location.href = appUrl;
+
+            // Fallback to app store if app not installed
+            setTimeout(() => {
+                if (Date.now() - start < 1200) {
+                    window.location.href = fallbackUrl;
                 }
-            }
-            updateCartDisplay();
-            saveCart();
-        };
-
-        window.deleteItem = function(name) {
-            cart = cart.filter(item => item.name !== name);
-            updateCartDisplay();
-            saveCart();
-        };
-
-        window.selectMethod = function(method) {
-            document.getElementById('payment_method').value = method;
-            document.querySelectorAll('.method-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            event.currentTarget.classList.add('selected');
-            updatePaymentDetails(method);
-        };
-
-        function updatePaymentDetails(method) {
-            const detailsDiv = document.getElementById('payment-details');
-            let html = '';
-            
-            if (method === 'telebirr') {
-                html = `
-                    <div class="telebirr-info">
-                        <h4><i class="fas fa-mobile-alt" style="color:#2b7a4b;"></i> Telebirr Payment</h4>
-                        <p>1. Open your Telebirr app.</p>
-                        <p>2. Select "Pay" and scan the QR code below or enter the merchant code.</p>
-                        <div style="background:#fff; padding:1rem; text-align:center; margin:1rem 0;">
-                            <i class="fas fa-qrcode" style="font-size:5rem; color:#2b7a4b;"></i>
-                            <p><strong>Merchant: KG Grocery</strong></p>
-                            <p>Code: 123456</p>
-                        </div>
-                        <p>3. Enter amount: <strong id="telebirrAmount">${document.getElementById('order_total')?.value || '0'} Birr</strong></p>
-                        <p>4. Confirm payment. You'll be redirected automatically.</p>
-                    </div>
-                `;
-            } else if (method === 'bank') {
-                const total = document.getElementById('order_total') ? document.getElementById('order_total').value : '0';
-                html = `
-                    <div class="bank-details">
-                        <h4>Bank Transfer</h4>
-                        <p>Transfer the exact amount to one of these accounts:</p>
-                        <p><strong>Commercial Bank of Ethiopia</strong><br>
-                        Account: KG Grocery Delivery<br>
-                        Number: 1000023456789</p>
-                        <p><strong>Bank of Abyssinia</strong><br>
-                        Account: KG Grocery<br>
-                        Number: 2000012345678</p>
-                        <p><strong>Amount to transfer: ${total} Birr</strong></p>
-                        <button class="copy-btn" onclick="copyAccount('1000023456789')">Copy CBE Account</button>
-                        <button class="copy-btn" onclick="copyAccount('2000012345678')">Copy BoA Account</button>
-                        <p style="margin-top:1rem;">After transfer, click "Place order" and we'll confirm manually.</p>
-                    </div>
-                `;
-            } else if (method === 'cash') {
-                html = `
-                    <div class="cash-info">
-                        <h4>Cash on Delivery</h4>
-                        <p><i class="fas fa-check-circle" style="color:#2b7a4b;"></i> Pay when your order arrives.</p>
-                        <p>Our delivery person will carry change, but exact amount is appreciated.</p>
-                        <p>Total to pay: <strong id="cashAmount">${document.getElementById('order_total')?.value || '0'} Birr</strong></p>
-                    </div>
-                `;
-            } else if (method === 'social') {
-                const total = document.getElementById('order_total')?.value || '0';
-                html = `
-                    <div class="social-payment-info">
-                        <h4><i class="fas fa-hashtag" style="color:#2b7a4b;"></i> Social Media Payment</h4>
-                        <p>Click the button below to go to our social media payment page. There you'll find our contact details and instructions.</p>
-                        <p><strong>Total amount: ${total} Birr</strong></p>
-                        <a href="social-payment.html?total=${total}" target="_blank" class="btn" style="display: inline-block; margin-top: 1rem; background:#2b7a4b; color:white; padding:0.8rem 1.5rem; border-radius:40px; text-decoration:none;">
-                            <i class="fas fa-external-link-alt"></i> Go to Social Payment Page
-                        </a>
-                    </div>
-                `;
-            }
-            detailsDiv.innerHTML = html;
+            }, 1000);
         }
 
-        window.copyAccount = function(account) {
-            navigator.clipboard.writeText(account).then(() => {
-                alert("Account number copied!");
-            });
-        };
+        function generateOrderId() {
+            return 'ORD-' + Math.floor(Math.random() * 10000);
+        }
 
-        window.placeOrder = function() {
-            const method = document.getElementById('payment_method').value;
-            const total = document.getElementById('order_total').value;
-            const user = getCurrentUser();
-            if (!user) {
-                alert('Please login first.');
-                return;
-            }
+        function confirmCashPayment() {
+            const total = document.getElementById('totalAmount').innerText;
+            document.getElementById('modalTotal').innerText = total;
+            document.getElementById('cashModal').classList.add('active');
+            
+            // Here you would also save the order to localStorage
+            saveOrder('cash');
+        }
 
-            const name = document.getElementById('order_name').value.trim();
-            const phone = document.getElementById('order_phone').value.trim();
-            const email = document.getElementById('order_email').value.trim();
-            const address = document.getElementById('order_address').value.trim();
-            const details = document.getElementById('order_details').value.trim();
-            const instructions = document.getElementById('order_instructions').value.trim();
+        function openSocialPayment() {
+            const total = document.getElementById('totalAmount').innerText.replace(' Birr', '');
+            window.location.href = 'social-payment.html?total=' + total;
+        }
 
-            if (!name || !phone || !address) {
-                alert('Please fill in all required fields (name, phone, address).');
-                return;
-            }
+        function closeModal() {
+            document.getElementById('cashModal').classList.remove('active');
+            // Redirect to profile
+            window.location.href = 'profile.html#orders';
+        }
+
+        function saveOrder(paymentMethod) {
+            const user = JSON.parse(localStorage.getItem('kgCurrentUser'));
+            if (!user) return;
+
+            const cart = JSON.parse(localStorage.getItem('kgCart')) || [];
+            const total = document.getElementById('totalAmount').innerText.replace(' Birr', '');
 
             const order = {
-                id: 'ORD-' + Math.floor(Math.random() * 1000),
+                id: 'ORD-' + Math.floor(Math.random() * 10000),
                 date: new Date().toISOString().split('T')[0],
                 total: total,
                 status: 'pending',
-                payment: method,
-                items: cart,
-                customer: { name, phone, email, address, details, instructions }
+                payment: paymentMethod,
+                items: cart
             };
 
             let userOrders = JSON.parse(localStorage.getItem('kgOrders_' + user.phone)) || [];
             userOrders.push(order);
             localStorage.setItem('kgOrders_' + user.phone, JSON.stringify(userOrders));
+            
+            // Clear cart
+            localStorage.setItem('kgCart', '[]');
+        }
 
-            const formData = new FormData();
-            formData.append('_replyto', email || user.phone + '@example.com');
-            formData.append('_subject', 'New KG Grocery Order #' + order.id);
-            formData.append('order_number', order.id);
-            formData.append('name', name);
-            formData.append('phone', phone);
-            formData.append('email', email || 'not provided');
-            formData.append('address', address);
-            formData.append('delivery_details', details);
-            formData.append('instructions', instructions);
-            formData.append('payment_method', method);
-            formData.append('total', total + ' Birr');
-            formData.append('cart', JSON.stringify(cart));
-
-            const FORMSPREE_URL = 'https://formspree.io/f/your-actual-endpoint'; // <-- REPLACE THIS
-
-            fetch(FORMSPREE_URL, {
-                method: 'POST',
-                body: formData,
-                headers: { 'Accept': 'application/json' }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => { throw new Error(err.error || 'Formspree error'); });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(`Order placed! Your order number is ${order.id}. A confirmation email has been sent.`);
-                cart = [];
-                saveCart();
-                updateCartDisplay();
-                window.location.href = 'profile.html#orders';
-            })
-            .catch(error => {
-                console.error('Formspree error:', error);
-                alert(`Order placed (${order.id}) but email notification failed. You can still view your order in your profile.`);
-                cart = [];
-                saveCart();
-                updateCartDisplay();
-                window.location.href = 'profile.html#orders';
-            });
-        };
-
-        // Load cart on page load
-        loadCart();
-        // Set default payment method
-        selectMethod('telebirr');
-
-        // Hamburger mock
-        document.querySelector('.hamburger')?.addEventListener('click', () => {
-            alert('Mobile menu would open here');
-        });
+        // Load on page start
+        loadOrderSummary();
     </script>
 </body>
 </html>
